@@ -13,14 +13,17 @@ class Grille {
     rot(d);
     for (int j=0; j<taille; j++) {
       glisse(j);
-      //sc+=combine(j);
+     // sc+=combine(j);
       //glisse(j);
     }
+    
     rot(-d);
+    /*
     if (aChange()) {
       arrayCopy(grille, backup);
       ajoute();
     }
+    */
     return sc;
   }
   public void trace(float x, float y, float l) {
@@ -49,7 +52,8 @@ class Grille {
   private void init() {
     grille = new int[taille*taille];
     backup = new int[taille*taille];
-    ajoute(2);
+    ajoute();
+    ajoute();
   }
   private int lit(int x, int y) {
     return (x>=0 && x<taille && y>=0 && y<taille)?grille[x+taille*y]:0;
@@ -68,11 +72,9 @@ class Grille {
     if (i>=0 && i<taille*taille) grille[i]=n;
   }
   private void glisse(int j) {
-    for (int i=taille-1; i>0; i--) if (lit(i, j)==0) {
-      for (int k=i; k>0; k--) 
+    for (int i=taille-1; i>=0; i--) if (lit(i, j)==0) {
+      for (int k=i; k>=0; k--) 
         ecrit(k, j, lit(k-1, j));
-      ecrit(0, j, 0);
-
     }
   }
   private int combine(int j) {
@@ -101,9 +103,6 @@ class Grille {
     for (int i=0; i<taille*taille; i++) if (grille[i]!=backup[i]) return true;
     return false;
   }
-  private void ajoute(int n) {
-    for (int k=0; k<n; k++) ajoute();
-  } 
   private void ajoute() {
     int i;
     if (!estPlein()) {

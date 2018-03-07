@@ -14,13 +14,13 @@ void keyPressed() {
   case RIGHT :
     score+=jeu.joue(0);
     break;
-  case DOWN :
+  case UP :
     score+=jeu.joue(1);
     break;
   case LEFT :
     score+=jeu.joue(2);
     break;
-  case UP :
+  case DOWN :
     score+=jeu.joue(3);
     break;
   }
