@@ -9,29 +9,23 @@ class Grille {
   }
   public int joue(int d) {
     int sc = 0;
-    println(d);
+    arrayCopy(grille, backup);
     rot(d);
     for (int j=0; j<taille; j++) {
       glisse(j);
-     // sc+=combine(j);
-      //glisse(j);
+      sc+=combine(j);
+      glisse(j);
     }
-    
     rot(-d);
-    /*
-    if (aChange()) {
-      arrayCopy(grille, backup);
-      ajoute();
-    }
-    */
+    if (aChange()) ajoute();
     return sc;
   }
-  public void trace(float x, float y, float l) {
+  public boolean trace(float x, float y, float l) {
     float w = l/taille;
-    strokeWeight(w/20);
-    stroke(#BBADA0);
-    PFont font = createFont("Arial Bold", 32);
-    textFont(font);
+    strokeWeight(w/10);
+    stroke(#BDAF9E);
+    fill(#BDAF9E);
+    rect(x, y, l, l,w/25);
     textAlign(CENTER, CENTER);
     for (int i=0; i<taille*taille; i++) {
       int v = lit(i);
@@ -40,14 +34,22 @@ class Grille {
       if (v>0) {
         String txt = ""+int(pow(2, v));
         fill((v<3)?#605020:255);
-        textSize(w*1.5);
+        textSize(w*1.7);
         textSize(w*w/max(textWidth(txt), textAscent()+textDescent()));
         text(txt, x+w*(i%taille)+w/2, y+w*(int(i/taille))+w/2.2);
       }
     }
+    return bloque();
   }
-  public void retour() {
-    arrayCopy(backup, grille);
+  public int maxi() {
+    return int(pow(2,max(grille)));
+  }
+  private boolean bloque() {
+    boolean ok = true;
+    for (int i = 0; i < taille; i++) 
+      for (int j = 0; j < taille; j++) 
+        if (lit(i, j)==0 || lit(i, j)==lit(i-1, j) || lit(i, j)==lit(i, j-1)) ok = false;
+    return ok;
   }
   private void init() {
     grille = new int[taille*taille];
@@ -56,10 +58,10 @@ class Grille {
     ajoute();
   }
   private int lit(int x, int y) {
-    return (x>=0 && x<taille && y>=0 && y<taille)?grille[x+taille*y]:0;
+    return (x>=0 && x<taille && y>=0 && y<taille)?lit(x+taille*y):-1;
   }  
   private int lit(int i) {
-    return (i>=0 && i<taille*taille)?grille[i]:0;
+    return (i>=0 && i<taille*taille)?grille[i]:-1;
   }
   private boolean estPlein() {
     for (int g : grille) if (g==0) return false;
@@ -72,18 +74,19 @@ class Grille {
     if (i>=0 && i<taille*taille) grille[i]=n;
   }
   private void glisse(int j) {
-    for (int i=taille-1; i>=0; i--) if (lit(i, j)==0) {
+    for (int i=0; i<taille-1; i++) if (lit(i+1, j)==0) {
       for (int k=i; k>=0; k--) 
-        ecrit(k, j, lit(k-1, j));
+        ecrit(k+1, j, lit(k, j));
+      ecrit(0, j, 0);
     }
   }
   private int combine(int j) {
     int sc = 0;
     for (int i=taille-1; i>0; i--) 
-      if (lit(i, j)==lit(i-1, j)) {
-        ecrit(i, j, lit(i, j)+1);
-        ecrit(i-1, j, 0);
-        sc+=pow(2, lit(i, j));
+      if (lit(i, j)==lit(i-1, j) && lit(i, j)!=0) {
+        ecrit(i-1, j, lit(i, j)+1);
+        sc+=pow(2, lit(i, j)+1);
+        ecrit(i, j, 0);
       }
     return sc;
   }
@@ -100,7 +103,7 @@ class Grille {
     grille=rot;
   }
   private boolean aChange() {
-    for (int i=0; i<taille*taille; i++) if (grille[i]!=backup[i]) return true;
+    for (int i=0; i<taille*taille; i++) if (grille[i]!=backup[i])  return true;
     return false;
   }
   private void ajoute() {
