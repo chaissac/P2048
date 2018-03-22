@@ -82,9 +82,9 @@ class Grille {
   }
   private int combine(int j) {
     int sc = 0;
-    for (int i=taille-1; i>0; i--) 
-      if (lit(i, j)==lit(i-1, j) && lit(i, j)!=0) {
-        ecrit(i-1, j, lit(i, j)+1);
+    for (int i=taille-2; i>=0; i--) 
+      if (lit(i, j)==lit(i+1, j) && lit(i, j)!=0) {
+        ecrit(i+1, j, lit(i, j)+1);
         sc+=pow(2, lit(i, j)+1);
         ecrit(i, j, 0);
       }
